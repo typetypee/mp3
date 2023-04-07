@@ -3,7 +3,7 @@ var fileSelector = document.getElementById("file-selector");
 
  var audioTag = document.body.querySelector("audio");
 
- 
+
 var fileList;
 var currentNumber = 0;
 
@@ -19,7 +19,7 @@ function showList(list) {
     }
     document.getElementById("box-storage").appendChild(box);
   }
-  
+
 }
 
 
@@ -28,7 +28,6 @@ fileSelector.addEventListener("change", function(event){ //if files have been ad
   showList(fileList);
   setNewSong();
   loopOff();
-
 })
 
 var updateTimer;
@@ -41,7 +40,6 @@ function setNewSong() {
   document.getElementById("current-song").innerHTML = fileList[currentNumber].name;
   updateTime = setInterval(seekUpdate, 1000);
   playSong();
-  
 }
 
 //shuffle the playlist
@@ -64,7 +62,7 @@ loopButton.onclick = function() {
 function loopOn() {
   loopSong = true;
   loopButton.style.backgroundColor = "green"
-  
+
 }
 
 function loopOff() {
@@ -80,7 +78,7 @@ audioTag.onended = function() {
   }
     setNewSong();
     playSong();
-  
+
 }
 
 //play and pause stuff {
@@ -89,7 +87,7 @@ var playButton = document.getElementById("play-button");
 playButton.onclick = function(){
   if(playing) pauseSong();
   else if (!playing) playSong();
-  
+
 };
 
 function playSong() {
@@ -103,7 +101,7 @@ function pauseSong() {
   audioTag.pause();
   playButton.innerHTML = "play_arrow";
 }
-  
+
 
 document.getElementById("previous-button").onclick = function(){
   if(currentNumber!== 0) currentNumber--;
@@ -138,37 +136,37 @@ progressBar.oninput = function() {
   // percentage of the seek slider
   // and get the relative duration to the track
   var seekto = audioTag.duration * (progressBar.value / 100);
- 
+
   // Set the current track time to the calculated seek position
   audioTag.currentTime = seekto;
 }
- 
+
 document.getElementById("volume-bar").oninput = function() {
   // Set the volume according to the
   // percentage of the volume slider set
   audioTag.volume = document.getElementById("volume-bar").value / 100;
 }
- 
+
 function seekUpdate() { //update the progress bar as the song plays
   var seekPosition = 0;
- 
+
   // Check if the current track duration is a legible number
   if (!isNaN(audioTag.duration)) {
     seekPosition = audioTag.currentTime * (100 / audioTag.duration);
     progressBar.value = seekPosition;
- 
+
     // Calculate the time left and the total duration
     let currentMinutes = Math.floor(audioTag.currentTime / 60);
     let currentSeconds = Math.floor(audioTag.currentTime - currentMinutes * 60);
     let durationMinutes = Math.floor(audioTag.duration / 60);
     let durationSeconds = Math.floor(audioTag.duration - durationMinutes * 60);
- 
+
     // Add a zero to the single digit time values
     if (currentSeconds < 10) { currentSeconds = "0" + currentSeconds; }
     if (durationSeconds < 10) { durationSeconds = "0" + durationSeconds; }
     if (currentMinutes < 10) { currentMinutes = "0" + currentMinutes; }
     if (durationMinutes < 10) { durationMinutes = "0" + durationMinutes; }
- 
+
     // Display the updated duration
     document.getElementById("start-time").textContent = currentMinutes + ":" + currentSeconds;
     document.getElementById("end-time").textContent = durationMinutes + ":" + durationSeconds;
@@ -184,7 +182,7 @@ searchBar.onkeyup = function() {
   for (var i = 0; i < list.length; i++) {
     if(list[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
       list[i].style.display = "";
-    } else {f
+    } else {
       list[i].style.display = "none";
     }
   }
@@ -200,24 +198,24 @@ sortButton.onclick = function() { //list in alphabetical order
       nameList.push(fileList[i].name);
     }
     var alphabetList = nameList.sort();
-    
-    for(var j = 0; j < tempoList.length; j++) {
-      for(var k = 0; k < tempoList.length; k++) {
-        if(tempoList[j].name === alphabetList[k]) {
-          tempoList.splice(j, 1);
-          tempoList.splice(k, 0, tempoList[j]);
-        }
+
+      for(var k = 0; k < alphabetList.length; k++) {
+        tempoList.findIndex(function(obj){
+          if(tempoList.name === alphabetList[k]) {
+            tempoList.splice(tempoList.indexOf(), 1);
+            tempoList.splice(k, 0, tempoList);
+          }
+        })
       }
-    }
     sortButton.innerHTML = "Sort play order"
     showAlphabet = true;
     showList(tempoList);
-    
+
   } else if (showAlphabet) { //put order back into order songs will be played
    sortButton.innerHTML = "Sort Alphbetical"
       showAlphabet = false;
       showList(fileList);
-     
+
   }
 }
 
@@ -240,4 +238,3 @@ function shuffle(array) {
 
   return array;
 }
-  
