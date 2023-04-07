@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Our Funky HTML Page</title>
+    <meta charset = "UTF-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel = "stylesheet" href = "mp3.css">
+  </head>
+  
+  <body>
+    <input type = "file" id = "file-selector" webkitdirectory directory multiple>
+    <div id = "wrapper">
+      <input type = "text" id = "search-bar" placeholder = "Search...">
+      <button id = "sort-button">Sort Alphabetical</button>
+      <div id = "box-storage"></div>
+      
+    </div>
+    
+    
+    <button id = "random-button">Shuffle</button>
+    <button id = "loop-button">Loop</button>
+  <div id = "play-container">
+    <div id = "current-song">Nothing selected :(</div>
+    <span id = "previous-button" class="material-icons">skip_previous</span>
+    <span id = "play-button" class="material-icons">play_arrow</span>
+    <span id = "next-button" class="material-icons">skip_next</span>
+    <div id = "progress-wrapper">
+      <small id = "start-time">00:00</small>
+      <small id = "end-time">00:00</small>
+      <input type = "range" id = "progress-bar" value = "0" min = "1" max= "100">
+    </div>
+    <div id = "volume-wrapper">
+      
+      <input type = "range" id = "volume-bar" value = "99" min = "1" max = "100">
+      <span class="material-icons" style = "float: left; font-size: 20px">volume_down</span>
+      <span class="material-icons" style = "float: right; font-size: 20px">volume_up</span>
+    </div>
+  </div>
+    <audio></audio>
+    <script src = "file.js"></script>
+  </body>
+</html>
