@@ -83,12 +83,12 @@ loopButton.onclick = function() {
 
 function loopOn() {
   loopSong = true;
-  loopButton.style.backgroundColor = "green"
+  loopButton.classList.add("loopOn")
 }
 
 function loopOff() {
   loopSong = false;
-  loopButton.style.backgroundColor = "white";
+  loopButton.classList.remove("loopOn");
 }
 
 audioTag.onended = function() {
@@ -147,6 +147,7 @@ function resetValues() { //reset the time numbers
   progressBar.value = 0;
   loopOff();
   clearSearchBar();
+  endTheMove();
 }
 
 progressBar.oninput = function() { //change the place in video when you press the funny bar
@@ -287,3 +288,30 @@ function shuffle(array) {
   return array;
 }
 //}
+
+const currentSong = document.getElementById("current-song");
+
+var intervalInProgress = false;
+var joe;
+currentSong.onmouseover = function() {
+  if(intervalInProgress) return;
+  else if(!intervalInProgress) {
+    intervalInProgress = true;
+    joe = setInterval(function() {
+    //  var scrollbarHeight = currentSong.scrollWidth - currentSong.clientWidth;
+      var booleanhelper = Math.abs(currentSong.scrollWidth - currentSong.scrollLeft - currentSong. clientWidth);
+      if(!(booleanhelper < 1)) currentSong.scrollTo(currentSong.scrollLeft + 1, 0);
+      else if(booleanhelper < 1) {
+        setTimeout(function(){
+          endTheMove();
+        }, 1000);
+      }
+    }, 15)
+  }
+}
+
+function endTheMove() {
+  currentSong.scrollTo(0, 0);
+  clearInterval(joe);
+  intervalInProgress = false;
+}
