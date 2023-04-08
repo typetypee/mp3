@@ -22,16 +22,8 @@
 #box-storage {
   width: 70%;
   height: 300px;
-  overflow: scroll;
+  overflow-y: scroll;
 
-  background-color: green;
-}
-#box-storage {
-  width: 50%;
-  height: 300px;
-  overflow: scroll;
-
-  background-color: red;
 }
 
 .box-class {

@@ -5,7 +5,7 @@ var fileList;
 var currentNumber = 0;
 
 function showList(list) {
-  document.getElementById("box-storage").innerHTML = "";
+  document.getElementById("box-storage").innerHTML = "no files :(";
   for(let i = 0; i < list.length; i++) {
     var box = document.createElement("div");
     box.classList.add("box-class");
