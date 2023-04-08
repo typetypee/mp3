@@ -1,8 +1,5 @@
-var fileSelector = document.getElementById("file-selector");
-
-
- var audioTag = document.body.querySelector("audio");
-
+const fileSelector = document.getElementById("file-selector");
+const audioTag = document.body.querySelector("audio");
 
 var fileList;
 var currentNumber = 0;
@@ -19,7 +16,7 @@ function showList(list) {
     }
     document.getElementById("box-storage").appendChild(box);
   }
-
+  changeBoxColor();
 }
 
 
@@ -36,24 +33,49 @@ var updateTimer;
 function setNewSong() {
   clearInterval(updateTimer);
   resetValues();
-  audioTag.src = URL.createObjectURL(fileList[currentNumber]);
-  document.getElementById("current-song").innerHTML = fileList[currentNumber].name;
-  updateTime = setInterval(seekUpdate, 1000);
+  if(!showAlphabet) {
+    audioTag.src = URL.createObjectURL(fileList[currentNumber]);
+      document.getElementById("current-song").innerHTML = fileList[currentNumber].name;
+      alphabetPlaylistPlaying = false;
+  }
+  else if(showAlphabet){
+    audioTag.src = URL.createObjectURL(tempoList[currentNumber]);
+      document.getElementById("current-song").innerHTML = tempoList[currentNumber].name;
+      alphabetPlaylistPlaying = true;
+  }
+  //change color of box
+  changeBoxColor();
+
+  updateTime = setInterval(seekUpdate, 1000); //check time of video every second (?)
   playSong();
+}
+
+function changeBoxColor() {
+  const boxList = document.getElementById("box-storage").getElementsByTagName("div");
+  for(var i = 0; i < boxList.length; i++) {
+    if((i === currentNumber) && ((showAlphabet && alphabetPlaylistPlaying)||(!showAlphabet && !alphabetPlaylistPlaying))) {
+      boxList[i].className = "box-class-selected";
+    }
+    else boxList[i].className = "box-class";
+  }
+
 }
 
 //shuffle the playlist
 document.getElementById("random-button").onclick = function() {
   shuffle(fileList);
-  currentNumber = 0;
+  currentNumber = 0; //begin at start of list
+  showAlphabet = false; //no more alphabet list
   setNewSong();
   //change the display!!!
   showList(fileList);
-  loopOff();
+  loopOff(); //shut off deh loop
+
 }
 
+//loop the current song
 var loopSong = false;
-var loopButton = document.getElementById("loop-button")
+const loopButton = document.getElementById("loop-button")
 loopButton.onclick = function() {
   if(!loopSong) loopOn();
   else if (loopSong) loopOff();
@@ -62,13 +84,11 @@ loopButton.onclick = function() {
 function loopOn() {
   loopSong = true;
   loopButton.style.backgroundColor = "green"
-
 }
 
 function loopOff() {
   loopSong = false;
   loopButton.style.backgroundColor = "white";
-
 }
 
 audioTag.onended = function() {
@@ -83,7 +103,7 @@ audioTag.onended = function() {
 
 //play and pause stuff {
 var playing = false;
-var playButton = document.getElementById("play-button");
+const playButton = document.getElementById("play-button");
 playButton.onclick = function(){
   if(playing) pauseSong();
   else if (!playing) playSong();
@@ -108,7 +128,6 @@ document.getElementById("previous-button").onclick = function(){
   else currentNumber = fileList.length - 1;
   setNewSong();
   playSong();
-  loopOff();
 }
 
 document.getElementById("next-button").onclick = function(){
@@ -116,22 +135,21 @@ document.getElementById("next-button").onclick = function(){
   else currentNumber = 0;
   setNewSong();
   playSong();
-  loopOff();
+
 }
 
-//}
-
-
 //progress bar and time stamps and volume {
-var progressBar = document.getElementById("progress-bar");
+const progressBar = document.getElementById("progress-bar");
 
-function resetValues() {
+function resetValues() { //reset the time numbers
   document.getElementById("start-time").innerHTML = "00:00";
   document.getElementById("end-time").innerHTML = "00:00";
   progressBar.value = 0;
+  loopOff();
+  clearSearchBar();
 }
 
-progressBar.oninput = function() {
+progressBar.oninput = function() { //change the place in video when you press the funny bar
   // Calculate the seek position by the
   // percentage of the seek slider
   // and get the relative duration to the track
@@ -175,8 +193,11 @@ function seekUpdate() { //update the progress bar as the song plays
 
 //}
 
+
+//SEARCH {
 var searchBar = document.getElementById("search-bar")
-searchBar.onkeyup = function() {
+searchBar.onkeyup = updateSearch;
+function updateSearch() {
   var filter = searchBar.value.toUpperCase();
   var list = document.getElementById("box-storage").getElementsByTagName("div");
   for (var i = 0; i < list.length; i++) {
@@ -187,36 +208,64 @@ searchBar.onkeyup = function() {
     }
   }
 }
-var showAlphabet = false;
 
+function clearSearchBar() {
+  searchBar.value = "";
+  updateSearch();
+}
+//}
+
+//button to sort songs and play them alphabteically or in og playorder
 var sortButton = document.getElementById("sort-button");
-sortButton.onclick = function() { //list in alphabetical order
+sortButton.onclick = changeAlphabet;
+var tempoList, //the alphabeitcal list
+    showAlphabet = false, //whether or not the alphabet list being shown
+    alphabetPlaylistPlaying = false; //wheter or not the alphabet playlist is being played
+
+function changeAlphabet(){ //show the alphabet song list
   if(!showAlphabet) {
     var nameList = [];
-    var tempoList = fileList;
-    for(var i = 0; i < fileList.length; i++) {
-      nameList.push(fileList[i].name);
-    }
-    var alphabetList = nameList.sort();
+    tempoList = [...fileList]; //tenporary variable to hold alpaheblical list
 
-      for(var k = 0; k < alphabetList.length; k++) {
-        tempoList.findIndex(function(obj){
-          if(tempoList.name === alphabetList[k]) {
-            tempoList.splice(tempoList.indexOf(), 1);
-            tempoList.splice(k, 0, tempoList);
+    for(var i = 0; i < fileList.length; i++) nameList.push(fileList[i].name.toLowerCase());
+
+    var alphabetList = nameList.sort(); //make the list of names in alphabitcal order
+      tempoList.sort((a, b) => alphabetList.indexOf(a.name.toLowerCase()) - alphabetList.indexOf(b.name.toLowerCase()));
+  /**
+      tempoList.forEach(function(obj){ //order tempolist in order of alphabetlist
+        for(var k = 0; k < alphabetList.length; k++) {
+          if(obj.name.toLowerCase() === alphabetList[k]) {
+          //  console.log(obj.name.toLowerCase() + "og position:" + tempoList.indexOf(obj) + "new position:" + k)
+            //swapElement(tempoList, tempoList.indexOf(obj), k);
+            tempoList.sort(function(b){
+              return tempoList.indexOf(obj) - alphabetList.indexOf(b);
+            });
+
+          //  console.log(obj.name.toLowerCase() + "new position" + tempoList.indexOf(obj))
           }
-        })
-      }
+        }
+      })
+    UNEEDED CODE (but i like it so it stays :)   )**/
+
     sortButton.innerHTML = "Sort play order"
     showAlphabet = true;
-    showList(tempoList);
+      changeBoxColor();
+    showList(tempoList); //note that the alphabeitcal list is not order songs are played in
 
   } else if (showAlphabet) { //put order back into order songs will be played
    sortButton.innerHTML = "Sort Alphbetical"
       showAlphabet = false;
+        changeBoxColor();
       showList(fileList);
-
   }
+}
+
+//random ass array functions {
+//swap elmenets around in an array function
+function swapElement(array, oldIndex, newIndex) {
+  var tmp = array[oldIndex];
+  array[oldIndex] = array[newIndex];
+  array[newIndex] = tmp;
 }
 
 //shuffle function
@@ -232,9 +281,9 @@ function shuffle(array) {
     currentIndex--;
 
     // And swap it with the current element.
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+      swapElement(array, currentIndex, randomIndex);
   }
 
   return array;
 }
+//}

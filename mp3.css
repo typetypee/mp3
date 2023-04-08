@@ -4,8 +4,8 @@
   --grey: #85bdbf;
   --darkgrey: #57737a;
   --black: #040f0f;
-  
-  
+
+
 }
 
 #play-container {
@@ -16,39 +16,44 @@
   color: var(--darkgrey);
   text-align: center;
   border-radius: 25px;
-  
+
 }
 
 #box-storage {
   width: 70%;
   height: 300px;
   overflow: scroll;
-  
+
   background-color: green;
 }
 #box-storage {
   width: 50%;
   height: 300px;
   overflow: scroll;
-  
+
   background-color: red;
 }
 
 .box-class {
-  display
   padding: 10px;
   background-color: var(--grey);
-  width: 60%;
+  width: 100%;
   height: 30%;
 }
 
 .box-class:hover {
   background-color: var(--secondlight);
 }
+.box-class-selected {
+  padding: 10px;
+  background-color: var(--secondlight);
+  width: 60%;
+  height: 30%;
+}
 
 #progress-wrapper {
   width: 100%;
-  
+
 }
 
 #start-time {
@@ -59,7 +64,7 @@
   float: right;
 }
 #progress-bar {
-  
+
   -webkit-appearance: none;
   width: 50%;
   height: 5px;
