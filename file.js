@@ -70,7 +70,7 @@ document.getElementById("random-button").onclick = function() {
   setNewSong();
   //change the display!!!
   showList(fileList);
-  loopOff(); //shut off deh loop
+  loopOff(); //shut off alphabetPlaylistPlaying loop
 
 }
 
@@ -148,7 +148,7 @@ function resetValues() { //reset the time numbers
   progressBar.value = 0;
   loopOff();
   clearSearchBar();
-  endTheMove();
+  restartTheMove();
 }
 
 progressBar.oninput = function() { //change the place in video when you press the funny bar
@@ -293,26 +293,32 @@ function shuffle(array) {
 const currentSong = document.getElementById("current-song");
 
 var intervalInProgress = false;
-var joe;
-currentSong.onmouseover = function() {
-  if(intervalInProgress) return;
-  else if(!intervalInProgress) {
-    intervalInProgress = true;
-    joe = setInterval(function() {
-    //  var scrollbarHeight = currentSong.scrollWidth - currentSong.clientWidth;
-      var booleanhelper = Math.abs(currentSong.scrollWidth - currentSong.scrollLeft - currentSong. clientWidth);
-      if(!(booleanhelper < 1)) currentSong.scrollTo(currentSong.scrollLeft + 1, 0);
-      else if(booleanhelper < 1) {
-        setTimeout(function(){
-          endTheMove();
-        }, 1000);
-      }
-    }, 15)
+var direction = "left";
+
+var joe = setInterval(myLove, 15);
+
+function myLove() {
+  var booleanhelper = Math.abs(currentSong.scrollWidth - currentSong.scrollLeft - currentSong. clientWidth);
+
+  if(currentSong.scrollLeft === 0) direction = "left"; //at start, 55 is start
+  if (booleanhelper < 1) direction = "right" //at end, 0 at the end
+
+  if(direction === "left") {
+    setTimeout(function(){
+      currentSong.scrollTo(currentSong.scrollLeft + 1, 0);
+    }, 1000);
+  }
+  else if(direction === "right") {
+    setTimeout(function(){
+      currentSong.scrollTo(currentSong.scrollLeft - 0.5, 0);
+    }, 1000);
   }
 }
 
-function endTheMove() {
-  currentSong.scrollTo(0, 0);
+
+
+function restartTheMove() {
   clearInterval(joe);
-  intervalInProgress = false;
+  joe = setInterval(myLove, 15);
+  currentSong.scrollTo(0, 0)
 }
